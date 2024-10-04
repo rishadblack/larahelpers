@@ -1,0 +1,39 @@
+{
+    "name": "rishadblack/larahelpers",
+    "description": "A collection of useful Laravel helper functions",
+    "keywords": ["Rishad Black","laravel", "helpers"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "S M Rishad",
+            "email": "rishad.black@gmail.com",
+            "homepage": "https://smrishad.com"
+        }
+    ],
+    "version": "1.0.0",
+    "require": {
+        "php": "^7.2.0|^8.0",
+        "illuminate/support": "~5.8.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^7.0|^8.0|^9.0|^10.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
