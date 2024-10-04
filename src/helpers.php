@@ -857,3 +857,19 @@ if (!function_exists('convertNumberToWordInBangla')) {
         return trim($words);
     }
 }
+
+if (!function_exists('generateRandomFloat')) {
+/**
+ * Generate a random float number within a specified range.
+ *
+ * @param float $min Minimum value of the range (inclusive).
+ * @param float $max Maximum value of the range (inclusive).
+ * @param int $decimals Number of decimal places to round the result to (default is 2).
+ * @return float A random float number between the specified minimum and maximum values.
+ */
+    function generateRandomFloat($min, $max, $decimals = 2)
+    {
+        $scale = pow(10, $decimals); // Determine the scale based on the desired decimal places.
+        return mt_rand($min * $scale, $max * $scale) / $scale; // Generate a random integer and scale it back to a float.
+    }
+}
