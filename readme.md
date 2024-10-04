@@ -14,132 +14,543 @@ composer require rishadblack/larahelpers
 
 This repository contains a collection of utility functions for various tasks. Below is a list of all functions along with a brief description of their purpose.
 
-## Functions
+# Function List
 
-### 1. `matchRouteParameter($Data = [])`
+## `generateRandomFloat`
 
-Checks if the current request parameter matches the provided data.
+Generates a random floating-point number within a specified range.
 
-### 2. `switchColLang(array $columns)`
+**Parameters:**
+- `$min` *(float)*: The minimum value of the range (inclusive).
+- `$max` *(float)*: The maximum value of the range (inclusive).
+- `$decimals` *(int)*: The number of decimal places (default is `2`).
 
-Switches the column name based on the application's current locale. Accepts an associative array of language codes and their corresponding column names.
+**Returns:** A random float number between `$min` and `$max`.
 
-### 3. `perPageRows($Data = [])`
+**Example:**
+```php
+$randomNumber = generateRandomFloat(1.0, 10.0); // e.g., 5.23
+```
+### `matchRouteParameter`
 
-Returns an array of items per page options. Defaults to `[10, 25, 50, 100, 250]` if no data is provided.
+Matches the route parameter with the provided data.
 
-### 4. `addAllField($Data)`
+**Parameters:**
 
-Adds an "All" option to a given array of data. Returns an array that includes `null => 'All'` along with the provided data.
+- `$Data` *(array)*: An array of data to match against.
 
-### 5. `currencySymbol()`
+**Returns:** `true` if the route parameter matches; `otherwise`, `false`.
 
-Returns the currency symbol for the application.
+**Example:**
 
-### 6. `numberEnToBn($number)`
+```php
+
+$result = matchRouteParameter(['id' => 123]); // true or false based on the current request
+```
+### `switchColLang`
+
+Switches the column name based on the application's locale.
+
+**Parameters:**
+
+- `$enCol` *(string)*: The English column name.
+- `$bnCol` *(string)*: The Bangla column name.
+
+**Returns:** The column name based on the current locale.
+
+**Example:**
+
+```php
+
+$columnName = switchColLang('name', 'নাম'); // 'name' or 'নাম' based on locale
+```
+### `perPageRows`
+
+Returns an array of rows per page options.
+
+**Parameters:**
+
+- `$Data` *(array)*: An array of data options.
+
+**Returns:** An array of row options or a default `array [10, 25, 50, 100, 250]`.
+
+**Example:**
+
+```php
+
+$options = perPageRows(); // [10, 25, 50, 100, 250]
+```
+### `addAllField`
+
+Adds an "All" option to the provided data.
+
+**Parameters:**
+
+- `$Data` *(Collection|array)*: A collection or array of data to which "All" is added.
+
+**Returns:** An array with "`All`" prepended to the original data.
+
+**Example:**
+
+```php
+
+$fields = addAllField($data); // [null => 'All', ...]
+```
+### `currencySymbol`
+
+Returns the currency symbol used in the application.
+
+**Returns:** A string representing the currency symbol.
+
+**Example:**
+
+```php
+
+$symbol = currencySymbol(); // '৳'
+```
+### `numberEnToBn`
 
 Converts English numerals to Bangla numerals.
 
-### 7. `asset_storage($path)`
+**Parameters:**
 
-Generates a URL for a given asset path in the storage directory.
+- `$number` *(string)*: The number in English numerals.
 
-### 8. `asset_favicon($path = null)`
+**Returns:** A `string` with Bangla numerals.
 
-Generates a URL for the application's favicon, falling back to the default logo if no path is provided.
+**Example:**
 
-### 9. `asset_logo($path = null)`
+```php
 
-Generates a URL for the application's logo, using the default logo if no path is provided.
+$banglaNumber = numberEnToBn('123'); // '১২৩'
+```
+### `asset_storage`
 
-### 10. `asset_powered_logo($path = null)`
+Generates the storage asset URL.
 
-Generates a URL for the powered logo, falling back to the default if no path is specified.
+**Parameters:**
 
-### 11. `asset_dark_logo($path = null)`
+- `$path` *(string)*: The path to the asset.
 
-Generates a URL for the dark version of the application logo.
+**Returns:** A URL `string` for the asset.
 
-### 12. `asset_profile_picture()`
+**Example:**
 
-Generates a URL for the default user profile picture.
+```php
 
-### 13. `numberFormatConverted($value, $sign = false, $decimal = false, $thousend = '')`
+$url = asset_storage('uploads/file.jpg'); // URL for the asset
+```
+### `asset_favicon`
 
-Formats a number according to the specified decimal and sign, returning it as a string.
+Generates the favicon asset URL.
 
-### 14. `percentFormat($value, $decimal = 2, $percentSign = '%')`
+**Parameters:**
 
-Formats a value as a percentage, rounding it to the specified number of decimal places.
+- `$path` *(string|null)*: The path to the favicon (defaults to config('app.logo')).
 
-### 15. `pointFormat($value, $sign = false, $decimal = false, $thousend = '')`
+**Returns:** A URL string for the favicon asset.
 
-Formats a point value according to the specified sign and decimal places.
+**Example:**
 
-### 16. `unitFormat($value, $unitId = false, $decimal = 0)`
+```php
 
-Formats a unit value according to the specified unit ID and decimal places.
+$faviconUrl = asset_favicon(); // URL for the favicon
+```
+### `asset_logo`
 
-### 17. `numberFormat($value, $sign = false, $decimal = false, $thousend = '')`
+Generates the logo asset URL.
 
-Formats a number with optional currency sign and specified decimal places.
+**Parameters:**
 
-### 18. `numberFormatOrPercent($value, $sign = false, $decimal = false, $thousend = '')`
+- `$path` *(string|null)*: The path to the logo (defaults to config('app.logo')).
 
-Formats a number or percentage based on the input value.
+**Returns:** A URL string for the logo asset.
 
-### 19. `getPercentOfValue($value, $percent)`
+**Example:**
+
+```php
+
+$logoUrl = asset_logo(); // URL for the logo
+```
+### `asset_powered_logo`
+
+Generates the powered logo asset URL.
+
+**Parameters:**
+
+- `$path` *(string|null)*: The path to the powered logo (defaults to config('app.logo_powered')).
+
+**Returns:** A URL string for the powered logo asset.
+
+**Example:**
+
+```php
+
+$poweredLogoUrl = asset_powered_logo(); // URL for the powered logo
+```
+### `asset_dark_logo`
+
+Generates the dark logo asset URL.
+
+**Parameters:**
+
+- `$path` *(string|null)*: The path to the dark logo (defaults to config('app.dark_logo')).
+
+**Returns:** A URL string for the dark logo asset.
+
+**Example:**
+
+```php
+
+$darkLogoUrl = asset_dark_logo(); // URL for the dark logo
+```
+### `asset_profile_picture`
+
+Generates the default profile picture asset URL.
+
+**Returns:** A URL `string` for the profile picture asset.
+
+**Example:**
+
+```php
+
+$profilePicUrl = asset_profile_picture(); // URL for the profile picture
+```
+### `numberFormatConverted`
+
+Formats a number with optional currency sign and decimal places.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The number to format.
+- `$sign` *(string|bool)*: Optional currency sign (default is false).
+- `$decimal` *(int)*: Number of decimal places (default is 2).
+- `$thousend` *(string)*: Optional thousand separator.
+
+**Returns:** A formatted `string`.
+
+**Example:**
+
+```php
+
+$formatted = numberFormatConverted(12345.678, true); // '$12,345.68' or '৳12,345.68'
+```
+### `percentFormat`
+
+Formats a number as a percentage.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The number to format.
+- `$decimal` *(int)*: Number of decimal places (default is 2).
+- `$percentSign` *(string)*: The percent sign (default is %).
+
+**Returns:** A formatted percentage `string`.
+
+**Example:**
+
+```php
+
+$percentage = percentFormat(0.256); // '25.60%'
+```
+### `pointFormat`
+
+Formats a number for display with optional currency sign.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The number to format.
+- `$sign` *(string|bool)*: Optional currency sign (default is false).
+- `$decimal` *(int)*: Number of decimal places (default is 2).
+- `$thousend` *(string)*: Optional thousand separator.
+
+**Returns:** A formatted `string`.
+
+**Example:**
+
+```php
+
+$formattedPoint = pointFormat(1234.567, true); // '৳1,234.57'
+```
+### `unitFormat`
+
+Formats a number with a unit identifier.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The number to format.
+- `$unitId` *(string|bool)*: Optional unit identifier (default is false).
+- `$decimal` *(int)*: Number of decimal places (default is 0).
+
+**Returns:** A formatted `string` with unit.
+
+**Example:**
+
+```php
+
+$formattedUnit = unitFormat(5000, 'kg'); // '5,000kg'
+```
+### `numberFormat`
+
+Formats a number for display with optional currency sign.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The number to format.
+- `$sign` *(string|bool)*: Optional currency sign (default is false).
+- `$decimal` *(int)*: Number of decimal places (default is 2).
+- `$thousend` *(string)*: Optional thousand separator.
+
+**Returns:** A formatted `string`.
+
+**Example:**
+
+```php
+
+$formattedNumber = numberFormat(1000); // '1,000.00'
+```
+### `numberFormatOrPercent`
+
+Formats a number or returns a percentage.
+
+**Parameters:**
+
+- `$value` *(float|string)*: The value to format.
+- `$sign` *(bool)*: Whether to include a currency sign (default is false).
+- `$decimal` *(bool)*: Whether to include decimals (default is false).
+- `$thousend` *(string)*: Optional thousand separator.
+
+**Returns:** A formatted `string` or percentage.
+
+**Example:**
+
+```php
+
+$formattedValue = numberFormatOrPercent('20%'); // '20%'
+```
+### `getPercentOfValue`
 
 Calculates the percentage of a given value.
 
-### 20. `getValueOfPercent($value, $percent)`
+**Parameters:**
 
-Calculates the original value from a given percentage.
+- `$percentage` *(float|string)*: The percentage to calculate.
+- `$amount` *(float|string)*: The amount to calculate the percentage of.
+- `$percenSign` *(bool)*: Whether the percentage sign is included (default is true).
 
-### 21. `getTimeFormat($time)`
+**Returns:** The calculated percentage of the amount.
 
-Formats a time value into a readable string format.
+**Example:**
 
-### 22. `getTimeFormatJs($time)`
+```php
 
-Formats a time value for JavaScript compatibility.
+$percentValue = getPercentOfValue('20%', 100); // 20
+```
+### `getValueOfPercent`
 
-### 23. `getfirstAndLastName($fullName)`
+Calculates the value based on a percentage of a given amount.
 
-Extracts the first and last names from a full name string.
+**Parameters:**
 
-### 24. `getFolderSize($path)`
+- `$percentage` *(float|string)*: The percentage value.
+- `$amount` *(float|string)*: The amount to calculate the value from.
 
-Calculates the total size of a folder located at the specified path.
+**Returns:** The calculated value based on the percentage.
 
-### 25. `getFormatSize($bytes)`
+**Example:**
 
-Formats a byte value into a more readable size string (e.g., KB, MB).
+```php
 
-### 26. `getCheckDevice()`
+$value = getValueOfPercent('25%', 200); // 50
+```
+### `getTimeFormat`
 
-Checks the type of device being used (e.g., mobile, desktop).
+Formats a given time into a specified format.
 
-### 27. `getGenerateDepth($array)`
+**Parameters:**
 
-Generates the depth of a given nested array.
+- `$time` *(string|DateTime)*: The time to format.
+- `$format` *(string)*: The format to apply (default is 'Y-m-d H:i:s').
 
-### 28. `convertPipeToArray($string)`
+**Returns:** A formatted time `string`.
 
-Converts a string with pipe delimiters into an array.
+**Example:**
 
-### 29. `convertNumberToWordInEnglish($number)`
+```php
 
-Converts a number into its English word representation.
+$formattedTime = getTimeFormat('now'); // e.g., '2024-10-05 15:00:00'
+```
+### `getTimeFormatJs`
 
-### 30. `getBanglaNumbers($number)`
+Formats a given time into a JavaScript-compatible format.
 
-Gets the Bangla representation of a number.
+**Parameters:**
 
-### 31. `convertNumberToWordInBangla($number)`
+- `$time` *(string|DateTime)*: The time to format.
 
-Converts a number into its Bangla word representation.
+**Returns:** A JavaScript-compatible time `string`.
 
+**Example:**
+
+```php
+
+$jsTime = getTimeFormatJs('now'); // e.g., '2024-10-05T15:00:00Z'
+```
+### `getfirstAndLastName`
+
+Returns the first and last name from a full name string.
+
+**Parameters:**
+
+- `$fullName` *(string)*: The full name string.
+
+**Returns:** An array containing the first and last names.
+
+**Example:**
+
+```php
+
+$names = getfirstAndLastName('John Doe'); // ['John', 'Doe']
+```
+### `getFolderSize`
+
+Calculates the size of a specified folder.
+
+**Parameters:**
+
+- `$dir` *(string)*: The path to the folder.
+
+**Returns:** The size of the folder in bytes.
+
+**Example:**
+
+```php
+
+$size = getFolderSize('/path/to/folder'); // e.g., 2048
+```
+### `getFormatSize`
+
+Formats a size in bytes into a more human-readable format.
+
+**Parameters:**
+
+- `$bytes` *(int)*: The size in bytes.
+
+**Returns:** A formatted string representing the size.
+
+**Example:**
+
+```php
+
+$formattedSize = getFormatSize(2048); // '2 KB'
+```
+### `getCheckDevice`
+
+Checks the user's device type.
+
+**Returns:** A string representing the device type `(e.g., 'mobile', 'tablet', 'desktop')`.
+
+**Example:**
+
+```php
+
+$device = getCheckDevice(); // 'desktop'
+```
+### `getGenerateDepth`
+
+Generates the depth for nested structures.
+
+**Parameters:**
+
+- `$array` *(array)*: The array to calculate depth.
+
+**Returns:** An integer representing the depth.
+
+**Example:**
+
+```php
+
+$depth = getGenerateDepth(['a' => ['b' => ['c']]]); // 3
+```
+### `convertPipeToArray`
+
+Converts a string with pipes into an array.
+
+**Parameters:**
+
+- `$string` *(string)*: The string to convert.
+
+**Returns:** An array of values.
+
+**Example:**
+
+```php
+
+`$array` = convertPipeToArray('one|two|three'); // ['one', 'two', 'three']
+```
+### `convertNumberToWordInEnglish`
+
+Converts a number into words in English.
+
+**Parameters:**
+
+- `$number` *(int)*: The number to convert.
+
+**Returns:** A string representing the number in words.
+
+**Example:**
+
+```php
+
+$words = convertNumberToWordInEnglish(123); // 'one hundred twenty-three'
+```
+### `getBanglaNumbers`
+
+Converts English numbers into Bangla numbers.
+
+**Parameters:**
+
+- `$number` *(int|string)*: The number to convert.
+
+**Returns:** A string with Bangla numbers.
+
+**Example:**
+
+```php
+
+$banglaNumbers = getBanglaNumbers(123); // '১২৩'
+```
+### `convertNumberToWordInBangla`
+
+Converts a number into words in Bangla.
+
+**Parameters:**
+- `$number` *(int)*: The number to convert.
+
+**Returns:** A string representing the number in Bangla words.
+
+**Example:**
+
+```php
+
+$banglaWords = convertNumberToWordInBangla(123); // 'একশত তেইশ'
+```
+### `generateRandomFloat`
+
+Generates a random floating-point number within a specified range.
+
+**Parameters:**
+- `$min` *(float)*: The minimum value of the range (inclusive).
+- `$max` *(float)*: The maximum value of the range (inclusive).
+- `$decimals` *(int)*: The number of decimal places (default is `2`).
+
+**Returns:** A random float number between `$min` and `$max`.
+
+**Example:**
+
+```php
+$randomNumber = generateRandomFloat(1.0, 10.0); // e.g., 5.23
+```
 ## Contributing
 
 If you would like to contribute to this project, please fork the repository and submit a pull request.
