@@ -1,7 +1,7 @@
 {
     "name": "rishadblack/larahelpers",
     "description": "A collection of useful Laravel helper functions",
-    "keywords": ["Rishad Black","laravel", "helpers"],
+    "keywords": ["Rishad Black", "laravel", "helpers"],
     "license": "MIT",
     "authors": [
         {
