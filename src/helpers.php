@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-if (!function_exists('matchRouteParameter')) {
+if (! function_exists('matchRouteParameter')) {
     /**
      * Match a request parameter with a given data array.
      *
@@ -26,7 +26,7 @@ if (!function_exists('matchRouteParameter')) {
     }
 }
 
-if (!function_exists('switchColLang')) {
+if (! function_exists('switchColLang')) {
     /**
      * Switch column name based on the application's locale.
      *
@@ -42,12 +42,12 @@ if (!function_exists('switchColLang')) {
             return $columns[$locale]; // Return the column name for the current locale
         }
 
-        // Return a default column name (fallback) if the locale is not found
+                                     // Return a default column name (fallback) if the locale is not found
         return $columns['en'] ?? ''; // Fallback to English or return an empty string
     }
 }
 
-if (!function_exists('perPageRows')) {
+if (! function_exists('perPageRows')) {
     /**
      * Get the number of rows to display per page.
      *
@@ -60,7 +60,7 @@ if (!function_exists('perPageRows')) {
     }
 }
 
-if (!function_exists('addAllField')) {
+if (! function_exists('addAllField')) {
     /**
      * Add an "All" option to a given data set.
      *
@@ -73,7 +73,7 @@ if (!function_exists('addAllField')) {
     }
 }
 
-if (!function_exists('currencySymbol')) {
+if (! function_exists('currencySymbol')) {
     /**
      * Get the default currency symbol.
      *
@@ -85,7 +85,7 @@ if (!function_exists('currencySymbol')) {
     }
 }
 
-if (!function_exists('numberEnToBn')) {
+if (! function_exists('numberEnToBn')) {
     /**
      * Convert English numbers to Bangla numbers.
      *
@@ -100,7 +100,7 @@ if (!function_exists('numberEnToBn')) {
     }
 }
 
-if (!function_exists('asset_storage')) {
+if (! function_exists('asset_storage')) {
     /**
      * Get the storage asset URL.
      *
@@ -113,7 +113,7 @@ if (!function_exists('asset_storage')) {
     }
 }
 
-if (!function_exists('asset_favicon')) {
+if (! function_exists('asset_favicon')) {
     /**
      * Get the favicon asset URL.
      *
@@ -126,7 +126,7 @@ if (!function_exists('asset_favicon')) {
     }
 }
 
-if (!function_exists('asset_logo')) {
+if (! function_exists('asset_logo')) {
     /**
      * Get the logo asset URL.
      *
@@ -139,7 +139,7 @@ if (!function_exists('asset_logo')) {
     }
 }
 
-if (!function_exists('asset_powered_logo')) {
+if (! function_exists('asset_powered_logo')) {
     /**
      * Get the powered logo asset URL.
      *
@@ -152,7 +152,7 @@ if (!function_exists('asset_powered_logo')) {
     }
 }
 
-if (!function_exists('asset_dark_logo')) {
+if (! function_exists('asset_dark_logo')) {
     /**
      * Get the dark logo asset URL.
      *
@@ -165,7 +165,7 @@ if (!function_exists('asset_dark_logo')) {
     }
 }
 
-if (!function_exists('asset_profile_picture')) {
+if (! function_exists('asset_profile_picture')) {
     /**
      * Get the default profile picture asset URL.
      *
@@ -177,7 +177,7 @@ if (!function_exists('asset_profile_picture')) {
     }
 }
 
-if (!function_exists('numberFormatConverted')) {
+if (! function_exists('numberFormatConverted')) {
     /**
      * Format a number with optional sign, decimal places, and thousand separator.
      *
@@ -190,7 +190,7 @@ if (!function_exists('numberFormatConverted')) {
     function numberFormatConverted($value, $sign = false, $decimal = false, $thousand = '')
     {
         // Default decimal places to 2 if not specified
-        if (!$decimal) {
+        if (! $decimal) {
             $decimal = 2;
         }
 
@@ -204,7 +204,7 @@ if (!function_exists('numberFormatConverted')) {
     }
 }
 
-if (!function_exists('percentFormat')) {
+if (! function_exists('percentFormat')) {
     /**
      * Format a number as a percentage, with optional decimal places and percent sign.
      *
@@ -228,7 +228,7 @@ if (!function_exists('percentFormat')) {
     }
 }
 
-if (!function_exists('pointFormat')) {
+if (! function_exists('pointFormat')) {
     /**
      * Format a number with a specified decimal and optional sign.
      *
@@ -249,13 +249,13 @@ if (!function_exists('pointFormat')) {
         }
 
         // Default decimal places to 2 if not specified
-        if (!$decimal) {
+        if (! $decimal) {
             $decimal = 2;
         }
 
         // Check if a sign is needed and format accordingly
         if ($sign) {
-            if (!is_string($sign)) {
+            if (! is_string($sign)) {
                 $sign = config('app.point_sign');
             }
 
@@ -267,7 +267,7 @@ if (!function_exists('pointFormat')) {
     }
 }
 
-if (!function_exists('unitFormat')) {
+if (! function_exists('unitFormat')) {
     /**
      * Format a number with an optional unit.
      *
@@ -301,7 +301,7 @@ if (!function_exists('unitFormat')) {
     }
 }
 
-if (!function_exists('numberFormat')) {
+if (! function_exists('numberFormat')) {
     /**
      * Format a number with optional sign and decimal places.
      *
@@ -321,26 +321,32 @@ if (!function_exists('numberFormat')) {
             $value = 0;
         }
 
-        // Default decimal places to 2 if not specified
-        if (!$decimal) {
-            $decimal = 2;
+        // Determine decimal places
+        if ($decimal === true) {
+            // If decimal is true, show as integer (no decimals)
+            $decimals = 0;
+        } elseif (is_numeric($decimal)) {
+            $decimals = (int) $decimal;
+        } else {
+            // Default decimals
+            $decimals = 2;
         }
 
         // Check if a sign is needed and format accordingly
         if ($sign) {
-            if (!is_string($sign)) {
+            if (! is_string($sign)) {
                 $sign = currencySymbol();
             }
 
-            return number_format((float) $value, $decimal) . ' ' . $sign;
+            return number_format((float) $value, $decimals) . ' ' . $sign;
         }
 
         // Return formatted number without sign
-        return number_format((float) $value, $decimal, '.', $thousand);
+        return number_format((float) $value, $decimals, '.', $thousand);
     }
 }
 
-if (!function_exists('numberFormatOrPercent')) {
+if (! function_exists('numberFormatOrPercent')) {
     /**
      * Format a number or return it as a percentage.
      *
@@ -365,7 +371,7 @@ if (!function_exists('numberFormatOrPercent')) {
     }
 }
 
-if (!function_exists('getPercentOfValue')) {
+if (! function_exists('getPercentOfValue')) {
     /**
      * Calculate the value of a percentage of a given amount.
      *
@@ -385,7 +391,7 @@ if (!function_exists('getPercentOfValue')) {
     }
 }
 
-if (!function_exists('getValueOfPercent')) {
+if (! function_exists('getValueOfPercent')) {
     /**
      * Calculate the profit margin percentage based on profit and amount.
      *
@@ -408,7 +414,7 @@ if (!function_exists('getValueOfPercent')) {
     }
 }
 
-if (!function_exists('getTimeFormat')) {
+if (! function_exists('getTimeFormat')) {
     /**
      * Get a specific date format based on the provided format index.
      *
@@ -442,7 +448,7 @@ if (!function_exists('getTimeFormat')) {
     }
 }
 
-if (!function_exists('getTimeFormatJs')) {
+if (! function_exists('getTimeFormatJs')) {
     /**
      * Get the JavaScript-compatible date format by modifying the PHP date format.
      *
@@ -462,7 +468,7 @@ if (!function_exists('getTimeFormatJs')) {
     }
 }
 
-if (!function_exists('getfirstAndLastName')) {
+if (! function_exists('getfirstAndLastName')) {
     /**
      * Get the first or last name from a full name string.
      *
@@ -475,14 +481,14 @@ if (!function_exists('getfirstAndLastName')) {
         $splitName = explode(' ', $name, 2);
 
         if ($callBack == 'first') {
-            return !empty($splitName[1]) ? $splitName[0] : '';
+            return ! empty($splitName[1]) ? $splitName[0] : '';
         } else {
-            return !empty($splitName[1]) ? $splitName[1] : $splitName[0];
+            return ! empty($splitName[1]) ? $splitName[1] : $splitName[0];
         }
     }
 }
 
-if (!function_exists('getFolderSize')) {
+if (! function_exists('getFolderSize')) {
     /**
      * Calculate the total size of a folder and its contents.
      *
@@ -491,12 +497,12 @@ if (!function_exists('getFolderSize')) {
      */
     function getFolderSize($dir)
     {
-        $total_size = 0; // Initialize total size
+        $total_size = 0;            // Initialize total size
         $dir_array = scandir($dir); // Get list of files and directories in the given directory
 
         foreach ($dir_array as $filename) {
             if ($filename !== '..' && $filename !== '.') { // Skip parent and current directory references
-                $path = $dir . '/' . $filename; // Full path to the file or directory
+                $path = $dir . '/' . $filename;                // Full path to the file or directory
                 if (is_dir($path)) {
                     $total_size += getFolderSize($path); // Recursively get folder size
                 } elseif (is_file($path)) {
@@ -509,7 +515,7 @@ if (!function_exists('getFolderSize')) {
     }
 }
 
-if (!function_exists('getFormatSize')) {
+if (! function_exists('getFormatSize')) {
     /**
      * Convert a size in bytes to a human-readable format (B, KB, MB, GB, TB).
      *
@@ -539,7 +545,7 @@ if (!function_exists('getFormatSize')) {
     }
 }
 
-if (!function_exists('getCheckDevice')) {
+if (! function_exists('getCheckDevice')) {
     /**
      * Check the user's device type based on the user agent string.
      *
@@ -562,7 +568,7 @@ if (!function_exists('getCheckDevice')) {
     }
 }
 
-if (!function_exists('getGenerateDepth')) {
+if (! function_exists('getGenerateDepth')) {
     /**
      * Generate a string of indentation characters based on the specified depth.
      *
@@ -577,7 +583,7 @@ if (!function_exists('getGenerateDepth')) {
     }
 }
 
-if (!function_exists('convertPipeToArray')) {
+if (! function_exists('convertPipeToArray')) {
     /**
      * Convert a pipe-separated string into an array, handling quotes.
      *
@@ -609,7 +615,7 @@ if (!function_exists('convertPipeToArray')) {
     }
 }
 
-if (!function_exists('convertNumberToWordInEnglish')) {
+if (! function_exists('convertNumberToWordInEnglish')) {
     /**
      * Convert a numeric value to words in English.
      *
@@ -621,7 +627,7 @@ if (!function_exists('convertNumberToWordInEnglish')) {
     {
         $value = preg_replace('/[^0-9.-]/', '', $value);
 
-        if (!$sign) {
+        if (! $sign) {
             $sign = ' TAKA ONLY';
         }
 
@@ -732,7 +738,7 @@ if (!function_exists('convertNumberToWordInEnglish')) {
     }
 }
 
-if (!function_exists('getBanglaNumbers')) {
+if (! function_exists('getBanglaNumbers')) {
     /**
      * Convert Arabic numerals to Bangla numerals.
      *
@@ -767,7 +773,7 @@ if (!function_exists('getBanglaNumbers')) {
     }
 }
 
-if (!function_exists('convertNumberToWordInBangla')) {
+if (! function_exists('convertNumberToWordInBangla')) {
     /**
      * Convert a numeric value to words in Bangla.
      *
@@ -792,12 +798,12 @@ if (!function_exists('convertNumberToWordInBangla')) {
         // Convert integer part to an integer for easier calculations
         $integerPart = intval($integerPart);
 
-        // Break the integer part into crore, lakh, thousand, hundred, and remaining digits
-        $crore = intval($integerPart / 10000000); // For Crores
+                                                            // Break the integer part into crore, lakh, thousand, hundred, and remaining digits
+        $crore = intval($integerPart / 10000000);           // For Crores
         $lakh = intval(($integerPart % 10000000) / 100000); // For Lakhs
         $thousand = intval(($integerPart % 100000) / 1000); // For Thousands
-        $hundred = intval(($integerPart % 1000) / 100); // For Hundreds
-        $lastTwoDigits = intval($integerPart % 100); // Remaining digits (up to 99)
+        $hundred = intval(($integerPart % 1000) / 100);     // For Hundreds
+        $lastTwoDigits = intval($integerPart % 100);        // Remaining digits (up to 99)
 
         // Build the words for the integer part
         if ($crore > 0) {
@@ -858,7 +864,7 @@ if (!function_exists('convertNumberToWordInBangla')) {
     }
 }
 
-if (!function_exists('generateRandomFloat')) {
+if (! function_exists('generateRandomFloat')) {
 /**
  * Generate a random float number within a specified range.
  *
@@ -869,7 +875,7 @@ if (!function_exists('generateRandomFloat')) {
  */
     function generateRandomFloat($min, $max, $decimals = 2)
     {
-        $scale = pow(10, $decimals); // Determine the scale based on the desired decimal places.
+        $scale = pow(10, $decimals);                           // Determine the scale based on the desired decimal places.
         return mt_rand($min * $scale, $max * $scale) / $scale; // Generate a random integer and scale it back to a float.
     }
 }
