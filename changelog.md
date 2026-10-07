@@ -2,6 +2,14 @@
 
 All notable changes to `larahelpers` will be documented in this file.
 
+## 2.0.1 - 2026-10-08
+
+### Changed
+
+- Dependencies refreshed and tested on PHP 8.4 (Symfony 8.1 components). No helper code changes.
+- Added a GitHub Actions workflow that runs the suite on PHP 8.3 and 8.4 against Laravel 11, 12 and 13.
+- The Composer description now matches what the package does.
+
 ## 2.0.0 - 2026-10-07
 
 ### Changed

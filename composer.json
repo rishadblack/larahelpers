@@ -1,6 +1,6 @@
 {
     "name": "rishadblack/larahelpers",
-    "description": "A collection of useful Laravel helper functions",
+    "description": "Laravel helper functions for Bangladesh: number and currency formatting, lakh/crore, amount in words in English and Bangla, Bangla dates, fiscal year and BD phone numbers.",
     "keywords": [
         "Rishad Black",
         "laravel",
@@ -14,7 +14,7 @@
             "homepage": "https://smrishad.com"
         }
     ],
-    "version": "2.0.0",
+    "version": "2.0.1",
     "require": {
         "php": "^8.3",
         "illuminate/support": "^11.0|^12.0|^13.0"
