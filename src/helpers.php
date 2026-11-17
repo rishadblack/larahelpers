@@ -515,6 +515,48 @@ if (! function_exists('unitFormat')) {
     }
 }
 
+if (! function_exists('groupedNumberFormat')) {
+    /**
+     * Format a number like number_format(), grouping digits in the international or Bangladeshi lakh/crore system.
+     *
+     * @param  mixed  $value  The value to be formatted; non-numeric characters are stripped.
+     * @param  int  $decimals  Number of decimal places.
+     * @param  string  $system  'bd' for 1,23,45,678.90, 'international' (or anything else) for 12,345,678.90.
+     * @param  string  $thousand  The group separator.
+     * @param  string  $decimalPoint  The decimal point.
+     * @return string The formatted number.
+     */
+    function groupedNumberFormat(mixed $value, int $decimals = 2, string $system = 'bd', string $thousand = ',', string $decimalPoint = '.'): string
+    {
+        $value = (float) preg_replace('/[^0-9.-]/', '', (string) $value);
+
+        if ($system !== 'bd') {
+            return number_format($value, $decimals, $decimalPoint, $thousand);
+        }
+
+        // Format without grouping first, so rounding and the sign match number_format() exactly
+        $formatted = number_format($value, $decimals, '.', '');
+        $negative = str_starts_with($formatted, '-');
+        $parts = explode('.', ltrim($formatted, '-'));
+        $integer = $parts[0];
+
+        // The last three digits form one group, then every two digits before them (lakh, crore, ...)
+        $groups = [substr($integer, -3)];
+        $head = substr($integer, 0, -3);
+
+        while (strlen($head) > 2) {
+            array_unshift($groups, substr($head, -2));
+            $head = substr($head, 0, -2);
+        }
+
+        if ($head !== '') {
+            array_unshift($groups, $head);
+        }
+
+        return ($negative ? '-' : '').implode($thousand, $groups).(isset($parts[1]) ? $decimalPoint.$parts[1] : '');
+    }
+}
+
 if (! function_exists('numberFormat')) {
     /**
      * Format a number with optional sign and decimal places.
@@ -523,10 +565,13 @@ if (! function_exists('numberFormat')) {
      * @param  bool|string  $sign  Whether to include a sign or the sign to use.
      * @param  int|bool  $decimal  Number of decimal places.
      * @param  string  $thousand  The thousand separator to use.
+     * @param  string|null  $system  Digit grouping: 'international' (1,234,567.00) or 'bd' for lakh/crore (12,34,567.00); null reads config('app.number_system', 'international').
      * @return string Formatted number with optional sign.
      */
-    function numberFormat($value, $sign = false, $decimal = false, $thousand = '')
+    function numberFormat($value, $sign = false, $decimal = false, $thousand = '', ?string $system = null)
     {
+        $system ??= (string) config('app.number_system', 'international');
+
         // Remove non-numeric characters except for decimal and negative signs
         $value = preg_replace('/[^0-9.-]/', '', (string) $value);
 
@@ -552,11 +597,11 @@ if (! function_exists('numberFormat')) {
                 $sign = currencySymbol();
             }
 
-            return number_format((float) $value, $decimals).' '.$sign;
+            return groupedNumberFormat($value, $decimals, $system, ',').' '.$sign;
         }
 
         // Return formatted number without sign
-        return number_format((float) $value, $decimals, '.', $thousand);
+        return groupedNumberFormat($value, $decimals, $system, $thousand);
     }
 }
 
@@ -568,9 +613,10 @@ if (! function_exists('numberFormatOrPercent')) {
      * @param  bool  $sign  Whether to include a sign for the number.
      * @param  bool  $decimal  Whether to include decimal points.
      * @param  string  $thousand  The thousand separator to use.
+     * @param  string|null  $system  Digit grouping passed to numberFormat(): 'international', 'bd' or null for config('app.number_system').
      * @return string Formatted number or percentage.
      */
-    function numberFormatOrPercent($value, $sign = false, $decimal = false, $thousand = '')
+    function numberFormatOrPercent($value, $sign = false, $decimal = false, $thousand = '', ?string $system = null)
     {
         // Remove any non-numeric characters except for decimal, negative, and percent symbols
         $value = preg_replace('/[^0-9-.%]/', '', (string) $value);
@@ -581,7 +627,7 @@ if (! function_exists('numberFormatOrPercent')) {
         }
 
         // Format the number using a separate formatting function
-        return numberFormat($value, $sign, $decimal, $thousand);
+        return numberFormat($value, $sign, $decimal, $thousand, $system);
     }
 }
 

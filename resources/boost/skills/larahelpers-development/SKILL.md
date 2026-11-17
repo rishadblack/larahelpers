@@ -23,6 +23,7 @@ The package ships no config. Add the keys you use to `config/app.php`:
 
 ```php
 'currency_symbol' => '৳',               // currencySymbol(), numberFormat($v, true)
+'number_system' => 'international',     // numberFormat() digit grouping when $system is null: 'international' (default) or 'bd'
 'point_sign' => 'pts',                  // pointFormat($v, true)
 'logo' => 'images/logo.png',            // asset_logo()
 'dark_logo' => 'images/logo-dark.png',  // asset_dark_logo()
@@ -40,17 +41,19 @@ All of these first strip every character except digits, `.` and `-`, and treat a
 
 | Helper | Example | Result | Notes |
 |---|---|---|---|
-| `numberFormat($value, $sign = false, $decimal = false, $thousand = '')` | `numberFormat(1234.567)` | `1234.57` | **No thousand separator by default.** |
+| `numberFormat($value, $sign = false, $decimal = false, $thousand = '', $system = null)` | `numberFormat(1234.567)` | `1234.57` | **No thousand separator by default.** |
 | | `numberFormat(1234.567, false, 1, ',')` | `1,234.6` | `$decimal` is the number of decimals. |
 | | `numberFormat(1234.5, false, true)` | `1235` | `$decimal = true` means no decimals. |
 | | `numberFormat(1234.5, true)` | `1,234.50 ৳` | `true` appends `currencySymbol()`. A string appends that string. Sign output always groups with `,` and ignores `$thousand`. |
+| | `numberFormat(12345678.9, false, 2, ',', 'bd')` | `1,23,45,678.90` | **Opt-in** lakh/crore grouping. `$system` null reads `config('app.number_system', 'international')`; an explicit value wins. Works with the sign path too: `numberFormat(12345678.9, true, system: 'bd')` gives `1,23,45,678.90 ৳`. Still needs `$thousand = ','` without a sign. |
+| `groupedNumberFormat($value, $decimals = 2, $system = 'bd', $thousand = ',', $decimalPoint = '.')` | `groupedNumberFormat(12345678.9)` | `1,23,45,678.90` | `number_format()` with a grouping system; strips non-numeric characters. Any `$system` other than `'bd'` is plain `number_format()`. |
 | `numberFormatConverted($value, $sign = false, $decimal = false, $thousand = '')` | `numberFormatConverted('1,234.5', '$')` | `$1,234.50` | Like `numberFormat()` but the sign is **prepended** with no space. `$decimal` falsy means 2. Strips non-numeric characters like the others. |
 | `compactNumber($value, $decimals = 1, $system = 'bd', $locale = 'en')` | `compactNumber(15000000)` | `1.5 Cr` | `bd` gives `1.5K`, `15 Lakh`, `1.5 Cr`; `international` gives `1.5K`, `1.5M`, `2.5B`, `3T`. `$locale = 'bn'` gives `১.৫ কোটি`, `২৫ লাখ`, `১.৫ হাজার`. Trailing zeros are dropped; below 1000 the number is returned as is. |
 | `numberBnToEn($number)` | `numberBnToEn('১,২৩৪.৫০')` | `1,234.50` | Reverse of `numberEnToBn()`, for parsing input typed in Bangla digits. |
 | `pointFormat($value, $sign = false, $decimal = false, $thousand = '')` | `pointFormat(1234.5, true)` | `1,234.50 pts` | `true` appends `config('app.point_sign')`. |
 | `unitFormat($value, $unitId = false, $decimal = 0)` | `unitFormat(5000, 'kg')` | `5,000kg` | Always groups with `,`; the unit is appended with no space; `true` appends `unit`. |
 | `percentFormat($value, $decimal = 2, $percentSign = '%')` | `percentFormat('25.456%', 1)` | `25.5%` | Returns a `float` when `$percentSign` is `''`. |
-| `numberFormatOrPercent($value, ...)` | `numberFormatOrPercent('20%')` | `20%` | Values containing `%` are returned as they are; everything else goes through `numberFormat()`. |
+| `numberFormatOrPercent($value, $sign = false, $decimal = false, $thousand = '', $system = null)` | `numberFormatOrPercent('20%')` | `20%` | Values containing `%` are returned as they are; everything else goes through `numberFormat()` (including `$system`). |
 | `currencySymbol()` | | `৳` | `config('app.currency_symbol')` or `৳`. |
 | `numberEnToBn($number)` | `numberEnToBn('1,234.50')` | `১,২৩৪.৫০` | Digit replacement only; other characters are kept. |
 | `getPercentOfValue($percentage, $amount, $percenSign = true)` | `getPercentOfValue('20%', 150)` | `30.0` | Pass `false` when `$percentage` is a plain number. |
@@ -190,5 +193,6 @@ it('detects the mobile app', function () {
 - **`numberToWords()` follows the app locale** when `$locale` is null, so the same call renders Bangla under `app()->setLocale('bn')`. Pass `'en'` explicitly for documents that must stay English.
 - **`convertNumberToWordInEnglish()` and `numberToWords()` place the words differently:** the old helper gives `... AND FIFTY TAKA ONLY`, the new one gives `... TAKA AND FIFTY PAISA ONLY`. Do not mix them on one document.
 - **`compactNumber()` defaults to lakh/crore.** Pass `'international'` for `M` / `B` output.
+- **`numberFormat()` defaults to international grouping**, the opposite of `compactNumber()`. Pass `$system = 'bd'` (or set `config('app.number_system')`) for `1,23,45,678.90`, and wrap in `numberEnToBn()` for `১,২৩,৪৫,৬৭৮.৯০`. `numberFormatConverted()`, `pointFormat()` and `unitFormat()` have no `$system` and always group internationally.
 - **`formatBdPhone()` returns `null`** for invalid numbers rather than the input; check for null before saving.
 - **Freeze time in date tests** with `Carbon::setTestNow('2026-10-07')` (and reset it in `afterEach`) before asserting on `banglaDate()` or `fiscalYear()` without a date.

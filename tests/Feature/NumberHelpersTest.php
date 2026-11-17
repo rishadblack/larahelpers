@@ -20,6 +20,57 @@ it('appends the currency symbol when a sign is requested', function () {
         ->and(numberFormat(1000, '€'))->toBe('1,000.00 €');
 });
 
+it('keeps international grouping by default', function () {
+    expect(numberFormat(12345678.9, false, 2, ','))->toBe('12,345,678.90')
+        ->and(numberFormat(12345678.9, '৳'))->toBe('12,345,678.90 ৳')
+        ->and(numberFormat(12345678.9))->toBe('12345678.90')
+        ->and(numberFormat(-1234567, false, 0, ','))->toBe('-1,234,567')
+        ->and(numberFormat(12345678.9, false, 2, ',', 'international'))->toBe('12,345,678.90');
+});
+
+it('groups digits in lakh and crore when the bd system is requested', function () {
+    expect(numberFormat(12345678.9, false, 2, ',', 'bd'))->toBe('1,23,45,678.90')
+        ->and(numberFormat(12345678.9, '৳', 2, '', 'bd'))->toBe('1,23,45,678.90 ৳')
+        ->and(numberFormat(123456789012, false, true, ',', 'bd'))->toBe('1,23,45,67,89,012')
+        ->and(numberFormat('1,234,567.891', false, 2, ',', 'bd'))->toBe('12,34,567.89')
+        ->and(numberFormat(12345678.9, false, 2, '', 'bd'))->toBe('12345678.90')
+        ->and(numberFormatOrPercent(1234567, false, true, ',', 'bd'))->toBe('12,34,567')
+        ->and(numberFormatOrPercent('20%', false, true, ',', 'bd'))->toBe('20%');
+});
+
+it('groups negative and small numbers in the bd system', function () {
+    expect(numberFormat(-12345678.9, false, 2, ',', 'bd'))->toBe('-1,23,45,678.90')
+        ->and(numberFormat(-1000, false, 0, ',', 'bd'))->toBe('-1,000')
+        ->and(numberFormat(-0.001, false, 2, ',', 'bd'))->toBe(numberFormat(-0.001, false, 2, ','))
+        ->and(numberFormat(999.999, false, 2, ',', 'bd'))->toBe('1,000.00')
+        ->and(numberFormat(999, false, 2, ',', 'bd'))->toBe('999.00')
+        ->and(numberFormat(5, false, true, ',', 'bd'))->toBe('5')
+        ->and(numberFormat(0, false, 2, ',', 'bd'))->toBe('0.00')
+        ->and(numberFormat(100000, false, true, ',', 'bd'))->toBe('1,00,000')
+        ->and(numberFormat(99999.5, false, 1, ',', 'bd'))->toBe('99,999.5');
+});
+
+it('gives bangla digits with lakh and crore grouping', function () {
+    expect(numberEnToBn(numberFormat(12345678.9, false, 2, ',', 'bd')))->toBe('১,২৩,৪৫,৬৭৮.৯০')
+        ->and(numberEnToBn(numberFormat(12345678.9, '৳', 2, '', 'bd')))->toBe('১,২৩,৪৫,৬৭৮.৯০ ৳');
+});
+
+it('reads the default grouping system from config', function () {
+    config()->set('app.number_system', 'bd');
+
+    expect(numberFormat(12345678.9, false, 2, ','))->toBe('1,23,45,678.90')
+        ->and(numberFormat(12345678.9, '৳'))->toBe('1,23,45,678.90 ৳')
+        ->and(numberFormat(12345678.9, false, 2, ',', 'international'))->toBe('12,345,678.90');
+});
+
+it('formats numbers with a grouping system directly', function () {
+    expect(groupedNumberFormat(12345678.9))->toBe('1,23,45,678.90')
+        ->and(groupedNumberFormat('1,23,45,678', 0))->toBe('1,23,45,678')
+        ->and(groupedNumberFormat(12345678.9, 2, 'international'))->toBe('12,345,678.90')
+        ->and(groupedNumberFormat(12345678.9, 1, 'bd', ' ', ','))->toBe('1 23 45 678,9')
+        ->and(groupedNumberFormat(-123, 0))->toBe('-123');
+});
+
 it('returns the configured or default currency symbol', function () {
     expect(currencySymbol())->toBe('৳');
 

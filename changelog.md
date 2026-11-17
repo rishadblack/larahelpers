@@ -2,6 +2,15 @@
 
 All notable changes to `larahelpers` will be documented in this file.
 
+## 2.1.0 - 2026-11-17
+
+### Added
+
+- Opt-in lakh/crore digit grouping (`1,23,45,678.90`). `numberFormat()` and `numberFormatOrPercent()` take a new last argument `$system` (`'international'` or `'bd'`); when it is null they read `config('app.number_system', 'international')`. It applies to the currency sign output and to the `$thousand` separator. `numberEnToBn()` of the result gives `১,২৩,৪৫,৬৭৮.৯০`.
+- `groupedNumberFormat($value, $decimals = 2, $system = 'bd', $thousand = ',', $decimalPoint = '.')` formats like `number_format()` in either grouping system.
+
+Existing output is unchanged unless you pass `'bd'` or set `app.number_system`.
+
 ## 2.0.1 - 2026-10-08
 
 ### Changed

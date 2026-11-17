@@ -21,6 +21,7 @@ The package ships no config file. Add the keys you need to `config/app.php`:
 
 ```php
 'currency_symbol' => '৳',                          // currencySymbol(), numberFormat($v, true)
+'number_system' => 'international',                // numberFormat() grouping: 'international' (default) or 'bd' for lakh/crore
 'currency_name' => 'Taka',                         // numberToWords() major unit, default TAKA
 'currency_fraction_name' => 'Paisa',               // numberToWords() minor unit, default PAISA
 'point_sign' => 'pts',                             // pointFormat($v, true)
@@ -38,15 +39,19 @@ Every formatter first strips all characters except digits, `.` and `-`, so `'1,2
 
 | Helper | Example | Result |
 |---|---|---|
-| `numberFormat($value, $sign = false, $decimal = false, $thousand = '')` | `numberFormat(1234.567)` | `1234.57` |
+| `numberFormat($value, $sign = false, $decimal = false, $thousand = '', $system = null)` | `numberFormat(1234.567)` | `1234.57` |
 | | `numberFormat(1234.567, false, 1, ',')` | `1,234.6` |
 | | `numberFormat(1234.5, false, true)` | `1235` (`true` means no decimals) |
 | | `numberFormat(1234.5, true)` | `1,234.50 ৳` (`true` appends `currencySymbol()`, a string appends that string) |
+| | `numberFormat(12345678.9, false, 2, ',', 'bd')` | `1,23,45,678.90` (lakh/crore grouping) |
+| | `numberFormat(12345678.9, true, system: 'bd')` | `1,23,45,678.90 ৳` |
+| `groupedNumberFormat($value, $decimals = 2, $system = 'bd', $thousand = ',', $decimalPoint = '.')` | `groupedNumberFormat(12345678.9)` | `1,23,45,678.90` |
+| | `groupedNumberFormat(12345678.9, 2, 'international')` | `12,345,678.90` |
 | `numberFormatConverted($value, $sign = false, $decimal = false, $thousand = '')` | `numberFormatConverted('1,234.5', '$')` | `$1,234.50` (sign prepended) |
 | `pointFormat($value, $sign = false, $decimal = false, $thousand = '')` | `pointFormat(1234.5, true)` | `1,234.50 pts` |
 | `unitFormat($value, $unitId = false, $decimal = 0)` | `unitFormat(5000, 'kg')` | `5,000kg` |
 | `percentFormat($value, $decimal = 2, $percentSign = '%')` | `percentFormat('25.456%', 1)` | `25.5%` (a `float` when `$percentSign` is `''`) |
-| `numberFormatOrPercent($value, ...)` | `numberFormatOrPercent('20%')` | `20%` (values with `%` are returned as is) |
+| `numberFormatOrPercent($value, $sign = false, $decimal = false, $thousand = '', $system = null)` | `numberFormatOrPercent('20%')` | `20%` (values with `%` are returned as is) |
 | `compactNumber($value, $decimals = 1, $system = 'bd', $locale = 'en')` | `compactNumber(15000000)` | `1.5 Cr` |
 | | `compactNumber(1500000)` | `15 Lakh` |
 | | `compactNumber(1500000, 1, 'international')` | `1.5M` |
@@ -59,6 +64,18 @@ Every formatter first strips all characters except digits, `.` and `-`, so `'1,2
 | `generateRandomFloat($min, $max, $decimals = 2)` | `generateRandomFloat(1.5, 2.5)` | e.g. `2.13` |
 
 Note that `numberFormat()`, `numberFormatConverted()` and `pointFormat()` use **no** thousand separator by default; pass `','`. When a sign is given, the number is always grouped with `,`.
+
+### Lakh/crore grouping
+
+`numberFormat()` groups digits in the international system (`12,345,678.90`) unless you opt in to the Bangladeshi/Indian system (`1,23,45,678.90`): pass `$system = 'bd'` (or the named argument `system: 'bd'`) for one call, or set `'number_system' => 'bd'` in `config/app.php` for the whole app. An explicit `$system` always wins over the config. The grouping applies to the separator in use, so without a sign you still pass `$thousand = ','`. Negative numbers, decimals and rounding behave exactly as with `number_format()`; numbers below 1,000 are unchanged. Pipe the result through `numberEnToBn()` for Bangla digits:
+
+```php
+numberFormat(12345678.9, false, 2, ',', 'bd');               // '1,23,45,678.90'
+numberFormat(-12345678.9, true, system: 'bd');               // '-1,23,45,678.90 ৳'
+numberEnToBn(numberFormat(12345678.9, false, 2, ',', 'bd')); // '১,২৩,৪৫,৬৭৮.৯০'
+```
+
+`numberFormatOrPercent()` passes `$system` through. `numberFormatConverted()`, `pointFormat()` and `unitFormat()` keep international grouping.
 
 ## Numbers in Words
 
